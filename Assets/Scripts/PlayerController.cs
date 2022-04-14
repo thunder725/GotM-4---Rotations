@@ -73,12 +73,16 @@ public class PlayerController : MonoBehaviour
 
     void SelectRing(InputAction.CallbackContext c)
     {
-        // Do a raycast that hits the rings
-        Ray ray = Camera.main.ScreenPointToRay(MousePositionOnScreen());
-
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, RingHitLayer))
+        if (!ringManager.areRingsResetting)
         {
-            selectedRing = raycastHit.collider.gameObject;
+            // Do a raycast that hits the rings
+            Ray ray = Camera.main.ScreenPointToRay(MousePositionOnScreen());
+
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, RingHitLayer))
+            {
+                // The colliders are in child objects of the Rings, so i'll use the Rigidbody (on the Ring) and not the Colliders (in the child)
+                selectedRing = raycastHit.rigidbody.gameObject;
+            }
         }
     }
     public Vector2 MousePositionOnScreen()
@@ -92,7 +96,7 @@ public class PlayerController : MonoBehaviour
     }
     void Fire(InputAction.CallbackContext c)
     {
-
+        StartCoroutine(ringManager.NewRingRotations());
     }
 
 }

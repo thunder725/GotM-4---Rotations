@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class Ring_Parameters : MonoBehaviour
 {
-    public string RingName;
-    public GameObject RingGO;
-    public float RingRotationSpeed;
-    public float RingStartingAngle;
+    public string Name;
+    public GameObject GO;
+    public float RotationSpeed;
+    public float StartingAngle;
     public Text DebugText;
 }
