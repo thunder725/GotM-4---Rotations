@@ -11,4 +11,5 @@ public class Ring_Parameters : MonoBehaviour
     public float RotationSpeed;
     public float StartingAngle;
     public Text DebugText;
+    public Vector3 RotationUpVector;
 }

@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,12 +12,22 @@ using UnityEngine.UI;
 
 public class Ringu : MonoBehaviour
 {
-    [SerializeField] Ring_Parameters[] Rings;
+    public Ring_Parameters[] Rings;
     PlayerController playerController;
     [SerializeField] float resetTimer; // Timer for them to reset
     public bool areRingsResetting; // If the rings should NOT be interacted with right now
+    bool isIslandRotating;
 
-    public bool eeeee;
+    [SerializeField] LayerMask enemyShipsLayer;
+    [SerializeField] GameObject entireIsland;
+
+    [SerializeField] float islandRotationTimer; // Time for the island to get to the next selected target
+    Transform target;
+    float finalTargetHeight; 
+    public bool testingBool;
+    Coroutine ringRotation, islandRotationNewTarget;
+    EnemyShipsScript targetScript;
+    Vector3 vectorToPreviousTarget;
 
     void Awake()
     {
@@ -25,6 +36,10 @@ public class Ringu : MonoBehaviour
 
     void Start()
     {
+        SelectNewTarget();
+
+        // Save it to cancel it at any time
+        ringRotation = StartCoroutine(NewRingRotations());
 
     }
 
@@ -32,7 +47,22 @@ public class Ringu : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            Rings[i].DebugText.text = Rings[i].Name + ": " + VerifyRotationDifference(Rings[i].GO, Rings[i].StartingAngle);
+            Rings[i].DebugText.text = Rings[i].Name + ": " + 1000 * VerifyRotationDifference(Rings[i].GO, Rings[i].StartingAngle);
+        }
+
+        if (target != null && testingBool)
+        {  
+            
+            // If the island is already rotating towards it with the coroutine, let it
+            if (!isIslandRotating)
+            {
+                entireIsland.transform.LookAt(target, Vector3.up);
+                entireIsland.transform.eulerAngles = Vector3.up * entireIsland.transform.eulerAngles.y;
+                
+                // Rotate vertically Ring One 
+                transform.LookAt(target, Vector3.up);
+            }
+
         }
     }
 
@@ -88,7 +118,7 @@ public class Ringu : MonoBehaviour
         */
 
 
-        ResetRings();
+        // ResetRings();
 
         // ==========================================================
         //                      VARIABLE SETUPS
@@ -109,14 +139,14 @@ public class Ringu : MonoBehaviour
         for (int i = 0; i < 4; i ++)
         {
             // Set the blue rotation
-            Rings[i].transform.eulerAngles = Vector3.forward * ((i + 1) * 90 + Random.Range(5, 85f));
+            Rings[i].transform.localEulerAngles = Vector3.forward * ((i + 1) * 90 + Random.Range(5, 85f));
 
 
             // Getting new Green rotation
             newRotationsY[i] = ((i+1)*90 + Random.Range(5, 85f));
         }
 
-
+        SaveAllUpVectors();
 
         // ==========================================================
         //                      ACTUALLY ROTATING
@@ -131,7 +161,11 @@ public class Ringu : MonoBehaviour
             for (int i = 0; i < 4; i ++)
             {
                 // Rotate of the value which is "Finish the whole thing in Timer value, and have it finish in newRotationY"
-                Rings[i].transform.Rotate(Vector3.up * newRotationsY[i] * Time.deltaTime / resetTimer, Space.Self);
+
+                // RotateRing(Rings[i].GO, Rings[i], newRotationsY[i] * Time.deltaTime / resetTimer);
+
+                // Old version not using the "Rotate Ring" method
+                Rings[i].transform.Rotate(Rings[i].RotationUpVector * newRotationsY[i] * Time.deltaTime / resetTimer, Space.Self);
             }
 
             yield return new WaitForEndOfFrame();
@@ -140,20 +174,202 @@ public class Ringu : MonoBehaviour
 
         areRingsResetting = false;
 
-        StopAllCoroutines();
+        StopCoroutine(ringRotation);
         yield return null;
     }
 
-    // Rotates around the Green circle axis, the one that the player will change
-    void RotateRing(GameObject _ring, float rotationValue)
+
+    void SaveAllUpVectors()
     {
-        _ring.transform.Rotate(Vector3.up * rotationValue, Space.Self); 
+        for (int i = 0; i < 4; i++)
+        {
+            Rings[i].RotationUpVector = Rings[i].transform.up;
+        }
+    }
+
+
+    // Rotates around the Green circle axis, the one that the player will change
+    public void RotateRing(GameObject _ring, Ring_Parameters ringScript,  float rotationValue)
+    {
+        if (!areRingsResetting)
+        {
+            _ring.transform.Rotate(ringScript.RotationUpVector * rotationValue, Space.Self); 
+        }
     }
 
     // Rotates around the Blue circle axis, so modifies how the RotateRing rotates
-    void RotateRingPivot(GameObject _ring, float rotationValue)
+    void RotateRingPivot(GameObject _ring, Ring_Parameters ringScript, float rotationValue)
     {
-        _ring.transform.Rotate(Vector3.forward * rotationValue, Space.Self); 
+        _ring.transform.Rotate(_ring.transform.forward * rotationValue, Space.Self); 
     }
+
+    IEnumerator RotateIslandTowardsNewTarget()
+    {
+        isIslandRotating = true;
+
+        /*
+
+        Get the current's forward // angle
+        Predict the target's position at the end
+                - The target's Speed (in its script) is in Angles in Degrees
+                - Get the current target's position on the Horizontal Plane of the island (to avoid any height)
+                - Apply a Quaternion rotation of (TargetSpeed * TimeToRotateTowardsIt) (on the Y axis) to its current position
+                        This should predict its new positon after a rotation
+
+        Divide the angle between the start and end position of the target by the time to rotate towards it
+        Move by an angle of this result each second
+
+        */
+
+        // Target's Starting Position, projected on the horitontal plane
+        Vector3 targetsStartingProjectedPosition = target.transform.position;
+        targetsStartingProjectedPosition[1] = entireIsland.transform.position.y;
+
+        // Target's angular speed in Degrees per second (because used in a RotateAround method)
+        float targetsAngularSpeed = target.GetComponent<EnemyShipsScript>().movementSpeed;
+
+        // The Quaterion rotation
+        var predictedTotalRotaiton = Quaternion.Euler(0, targetsAngularSpeed * islandRotationTimer, 0);
+
+        // The predicted's position of the target after its rotation
+                    /// Debug.log'd to confirm working!!
+                    // It successfully predicted where it would end!!!
+        Vector3 targetsEndProjectedPosition = predictedTotalRotaiton * targetsStartingProjectedPosition;
+
+
+        // Calculate the angle difference between the current angle and the angle to the end
+        float totalRotation = Vector3.SignedAngle(entireIsland.transform.forward, targetsEndProjectedPosition - entireIsland.transform.position, Vector3.up);
+
+        // How much should we rotate per second
+        var rotationPerSecond = totalRotation / islandRotationTimer;
+
+
+
+
+
+
+        
+        /*
+            Calculate how much RingOne should rotate up or down to look at the target in the end
+
+                - We know the vector to the previous target
+                - We know the height of the new target at the end of the rotation
+                
+            Do a basic Sin = O/H
+                Opposite = height difference // H = Hypothenusis = distance to the last target
+                - Calculate the height difference between those two targets
+                - Do the angle
+        */
+
+        // Difference =>  previous height - new height <=> (vectorToTarget + position).height - new height
+        float heightDifference = (vectorToPreviousTarget + transform.position).y - finalTargetHeight;
+
+        float deltaAngle = Mathf.Sin(heightDifference / vectorToPreviousTarget.magnitude) * Mathf.Rad2Deg;
+
+        var ringOneRotationPerSecond =  deltaAngle / islandRotationTimer;
+
+
+        // Debug.Log("RingOne will rotate a total of " + (ringOneRotationPerSecond * islandRotationTimer) + " degrees in " + islandRotationTimer + " which is a speed of " + ringOneRotationPerSecond + " degrees/s.");
+
+
+        float currentTimer = 0;
+
+        while (currentTimer < 1)
+        {
+            // Rotate the island
+            entireIsland.transform.Rotate(0, rotationPerSecond * Time.deltaTime, 0);
+
+            // Also rotate the main ring towards the Target's final height
+            transform.Rotate(ringOneRotationPerSecond * Time.deltaTime, 0, 0);
+
+            // Increase current timer
+            currentTimer += Time.deltaTime / islandRotationTimer;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        Debug.Log("Target started at position " + targetsStartingProjectedPosition + " and ended at position " + target.transform.position + "\nWe predicted the position " + targetsEndProjectedPosition);
+
+        isIslandRotating = false;
+
+        StopCoroutine(islandRotationNewTarget);
+        yield return null;
+    }
+
+    // ===============================================
+    //      OTHER METHODS
+    // ===============================================
+
+    public void Fire()
+    {
+        if (!areRingsResetting)
+        {
+            vectorToPreviousTarget = target.transform.position - transform.position;
+
+            if (target != null)
+            {Destroy(target.gameObject);}
+            
+
+            SelectNewTarget();
+            islandRotationNewTarget = StartCoroutine(RotateIslandTowardsNewTarget());
+
+
+
+            ringRotation = StartCoroutine(NewRingRotations());
+            
+            Debug.Log("Score for this shot: " + CalculateScore());
+
+            
+        }
+    }
+
+    void SelectNewTarget()
+    {
+        var shipsDetected = Physics.OverlapSphere(transform.position, 100, enemyShipsLayer);
+        if (shipsDetected.Length == 0)
+        {
+            Debug.LogError("NO SHIPS FOUND");
+            target = null;
+            return;
+        }
+
+        // Chose a random one
+        var rnd = Random.Range(0, shipsDetected.Length);
+
+        // Prevent getting the same as before (it should be destroyed but technically can be picked up again because the Destroy is not immediate)
+        if (shipsDetected[rnd].transform == target)
+        {
+            if (rnd == 0)
+            {
+                rnd ++;
+            }
+            else
+            {
+                rnd --;
+            }
+        }
+
+        target = shipsDetected[rnd].transform;
+
+        targetScript = target.GetComponent<EnemyShipsScript>();
+        finalTargetHeight = targetScript.WhatsYourHeightIn(islandRotationTimer);
+    }
+
+    float CalculateScore()
+    {
+        float score = 0;
+
+        float temp0 = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            temp0 = 1000 * VerifyRotationDifference(Rings[i].GO, Rings[i].StartingAngle);
+        
+            score += 100 / temp0;
+        }    
+
+        return Mathf.Ceil(score);
+    }
+
 
 }

@@ -373,6 +373,52 @@ Transform:
   m_Father: {fileID: 543450651630972747}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &288359733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 288359735}
+  - component: {fileID: 288359734}
+  m_Layer: 0
+  m_Name: ShipSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &288359734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288359733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff70584a7709df4ab35c4ba780da0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyShipPrefab: {fileID: 7666138369914500829, guid: cb29c5c1090a6ee4a80ed781ccf2ed2e, type: 3}
+  startingShipAmount: 15
+  buttonShipAmount: 0
+--- !u!4 &288359735
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288359733}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &452497610
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +769,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &770222425
 GameObject:
@@ -997,9 +1043,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 25, y: 25, z: 25}
-  m_Children: []
+  m_Children:
+  - {fileID: 543450652493930975}
+  - {fileID: 963194228}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &959444984
 GameObject:
@@ -1167,12 +1215,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.004635529, y: 0.9953239, z: -0.063098334, w: -0.07298974}
-  m_LocalPosition: {x: 1.2802473, y: 18.130373, z: 0.44761562}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: -0.36}
+  m_LocalScale: {x: 0.04, y: 0.04, z: 0.040000003}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_Father: {fileID: 951276844}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1035938167
 GameObject:
@@ -1264,6 +1312,88 @@ CapsuleCollider:
   m_Height: 0.25469285
   m_Direction: 1
   m_Center: {x: 0.77, y: -0.0019352242, z: 0}
+--- !u!1 &1123689444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1123689445}
+  - component: {fileID: 1123689447}
+  - component: {fileID: 1123689446}
+  m_Layer: 6
+  m_Name: Ring_Six
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1123689445
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123689444}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.12898046, y: 0.12898046, z: 0.3468381}
+  m_Children: []
+  m_Father: {fileID: 543450652493930975}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1123689446
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123689444}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f0710e2e8b5c69b469054eebba81b40f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1123689447
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123689444}
+  m_Mesh: {fileID: 854799940614875446, guid: 5ba41408bcb430e4e953a86f75ab8608, type: 3}
 --- !u!1 &1167712697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1662,7 +1792,7 @@ RectTransform:
   m_Children:
   - {fileID: 1533240143}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2251,6 +2381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459703c3814c5b544b8564828f9c9fed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRotationSpeed: 25
   RingHitLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -2266,7 +2397,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1894590712
 GameObject:
@@ -2779,7 +2910,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2110075259
 GameObject:
@@ -2987,17 +3118,18 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148222049125}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 17, z: -9}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalRotation: {x: -0.258819, y: 0, z: 0, w: 0.9659259}
+  m_LocalPosition: {x: 0, y: 0.68, z: 0}
+  m_LocalScale: {x: 0.19999999, y: 0.19999999, z: 0.19999999}
   m_Children:
   - {fileID: 543450653646467701}
   - {fileID: 543450653078499374}
   - {fileID: 543450651630972747}
   - {fileID: 543450651992571554}
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  - {fileID: 1123689445}
+  m_Father: {fileID: 951276844}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -30, y: 0, z: 0}
 --- !u!4 &543450653078499374
 Transform:
   m_ObjectHideFlags: 0
@@ -3020,14 +3152,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132149108271311}
-  m_LocalRotation: {x: -0, y: -0, z: -0.16585869, w: 0.9861496}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.42261827, w: 0.9063079}
+  m_LocalPosition: {x: -0.0000000052895377, y: 0, z: 0}
   m_LocalScale: {x: 0.8500002, y: 0.8500002, z: 0.8}
   m_Children:
   - {fileID: 25224865}
   m_Father: {fileID: 543450652493930975}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -19.094}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 50}
 --- !u!1 &919132147515188248
 GameObject:
   m_ObjectHideFlags: 0
@@ -3062,9 +3194,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Ring 5
   GO: {fileID: 919132147515188248}
-  RotationSpeed: 0
+  RotationSpeed: 35
   StartingAngle: 0
   DebugText: {fileID: 2110075261}
+  RotationUpVector: {x: 0, y: 0, z: 0}
 --- !u!54 &919132147515188250
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3115,9 +3248,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Ring 4
   GO: {fileID: 919132147910669809}
-  RotationSpeed: 0
+  RotationSpeed: 35
   StartingAngle: 0
   DebugText: {fileID: 529133698}
+  RotationUpVector: {x: 0, y: 0, z: 0}
 --- !u!54 &919132147910669811
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3172,7 +3306,12 @@ MonoBehaviour:
   - {fileID: 919132147515188249}
   resetTimer: 1.5
   areRingsResetting: 0
-  eeeee: 0
+  enemyShipsLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  entireIsland: {fileID: 951276840}
+  islandRotationTimer: 1.5
+  testingBool: 1
 --- !u!1 &919132148601121428
 GameObject:
   m_ObjectHideFlags: 0
@@ -3207,9 +3346,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Ring 3
   GO: {fileID: 919132148601121428}
-  RotationSpeed: 0
+  RotationSpeed: 35
   StartingAngle: 0
   DebugText: {fileID: 1982976553}
+  RotationUpVector: {x: 0, y: 0, z: 0}
 --- !u!54 &919132148601121430
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3260,9 +3400,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Ring 2
   GO: {fileID: 919132149108271311}
-  RotationSpeed: 0
+  RotationSpeed: 35
   StartingAngle: 0
   DebugText: {fileID: 1516696363}
+  RotationUpVector: {x: 0, y: 0, z: 0}
 --- !u!54 &919132149108271313
 Rigidbody:
   m_ObjectHideFlags: 0

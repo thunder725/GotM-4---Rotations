@@ -6,10 +6,6 @@
 
 ================== [CODING] ==================
 
-	- Player can select a ring
-	- Player can rotate the selected ring
-	- Player can rotate all 4 rings using the preselected keys
-
 	- Ships flying
 	- Following one ship
 	- Giving points when shooting depending on the score
