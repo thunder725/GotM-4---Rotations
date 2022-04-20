@@ -9,7 +9,6 @@ public class Ring_Parameters : MonoBehaviour
     public string Name;
     public GameObject GO;
     public float RotationSpeed;
-    public float StartingAngle;
     public Text DebugText;
     public Vector3 RotationUpVector;
 }

@@ -47,25 +47,31 @@ public class PlayerController : MonoBehaviour
         var ringFourRotationValue = inputs.Default.RotateRingFour.ReadValue<float>();
         var ringFiveRotationValue = inputs.Default.RotateRingFive.ReadValue<float>();
 
-        // If the buttons are pressed, rotate in the good direction the corresponding ring
-        if (ringTwoRotationValue != 0)
-        {
-            ringManager.RotateRing(ringManager.Rings[0].GO, ringManager.Rings[0], ringManager.Rings[0].RotationSpeed * Time.deltaTime * ringTwoRotationValue);
-        }
+        // Debug.Log(ringTwoRotationValue + "  " + ringThreeRotationValue + "  " + ringFourRotationValue + "  " + ringFiveRotationValue);
 
-        if (ringThreeRotationValue != 0)
+        // Don't rotate if the rings are doing the setup rotations
+        if (!ringManager.areRingsResetting)
         {
-            ringManager.RotateRing(ringManager.Rings[1].GO, ringManager.Rings[1], ringManager.Rings[1].RotationSpeed * Time.deltaTime * ringThreeRotationValue);
-        }
+            // If the buttons are pressed, rotate in the good direction the corresponding ring
+            if (ringTwoRotationValue != 0)
+            {
+                ringManager.RotateRing(ringManager.Rings[0].GO, ringManager.Rings[0], ringManager.Rings[0].RotationSpeed * Time.deltaTime * ringTwoRotationValue);
+            }
 
-        if (ringFourRotationValue != 0)
-        {
-            ringManager.RotateRing(ringManager.Rings[2].GO, ringManager.Rings[2], ringManager.Rings[2].RotationSpeed * Time.deltaTime * ringFourRotationValue);
-        }
+            if (ringThreeRotationValue != 0)
+            {
+                ringManager.RotateRing(ringManager.Rings[1].GO, ringManager.Rings[1], ringManager.Rings[1].RotationSpeed * Time.deltaTime * ringThreeRotationValue);
+            }
 
-        if (ringFiveRotationValue != 0)
-        {
-            ringManager.RotateRing(ringManager.Rings[3].GO, ringManager.Rings[3], ringManager.Rings[3].RotationSpeed * Time.deltaTime * ringFiveRotationValue);
+            if (ringFourRotationValue != 0)
+            {
+                ringManager.RotateRing(ringManager.Rings[2].GO, ringManager.Rings[2], ringManager.Rings[2].RotationSpeed * Time.deltaTime * ringFourRotationValue);
+            }
+
+            if (ringFiveRotationValue != 0)
+            {
+                ringManager.RotateRing(ringManager.Rings[3].GO, ringManager.Rings[3], ringManager.Rings[3].RotationSpeed * Time.deltaTime * ringFiveRotationValue);
+            }
         }
     }
 
@@ -97,14 +103,17 @@ public class PlayerController : MonoBehaviour
 
     void RotateSelectedRing(InputAction.CallbackContext c)
     {
-        if (selectedRing == null)
+        if (!ringManager.areRingsResetting)
         {
-            return;
+            if (selectedRing == null)
+            {
+                return;
+            }
+
+            var value = inputs.Default.RotateSelectedRing.ReadValue<float>();
+
+            ringManager.RotateRing(selectedRing, selectedRingScript, selectedRotationSpeed * value * Time.deltaTime);
         }
-
-        var value = inputs.Default.RotateSelectedRing.ReadValue<float>();
-
-        ringManager.RotateRing(selectedRing, selectedRingScript, selectedRotationSpeed * value * Time.deltaTime);
     }
 
     void Fire(InputAction.CallbackContext c)

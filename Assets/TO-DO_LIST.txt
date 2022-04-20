@@ -6,9 +6,7 @@
 
 ================== [CODING] ==================
 
-	- Ships flying
-	- Following one ship
-	- Giving points when shooting depending on the score
+
 
 
 

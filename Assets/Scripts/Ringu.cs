@@ -20,10 +20,13 @@ public class Ringu : MonoBehaviour
 
     [SerializeField] LayerMask enemyShipsLayer;
     [SerializeField] GameObject entireIsland;
+    [SerializeField] ScoreAddedScript scoreAddedTextScript;
+    [SerializeField] Text scoreText;
 
     [SerializeField] float islandRotationTimer; // Time for the island to get to the next selected target
     Transform target;
-    float finalTargetHeight; 
+    float finalTargetHeight;
+    int totalScore; 
     public bool testingBool;
     Coroutine ringRotation, islandRotationNewTarget;
     EnemyShipsScript targetScript;
@@ -45,9 +48,12 @@ public class Ringu : MonoBehaviour
 
     void Update()
     {
+
+        // Debug.Log(CalculateScore());
+
         for (int i = 0; i < 4; i++)
         {
-            Rings[i].DebugText.text = Rings[i].Name + ": " + 1000 * VerifyRotationDifference(Rings[i].GO, Rings[i].StartingAngle);
+            Rings[i].DebugText.text = Rings[i].Name + ": " + 1000 * VerifyRotationDifference(Rings[i].GO);
         }
 
         if (target != null && testingBool)
@@ -70,7 +76,7 @@ public class Ringu : MonoBehaviour
     //      ROTATION METHODS
     // ===============================================
 
-    float VerifyRotationDifference(GameObject ring, float startZRotation)
+    float VerifyRotationDifference(GameObject ring)
     {
         float angleDifference = 0;
 
@@ -102,7 +108,7 @@ public class Ringu : MonoBehaviour
         
         // ==========================================================
         // =====================================================================================
-        // Version 2
+        // Version 3
         // =====================================================================================
         // ==========================================================
 
@@ -131,7 +137,7 @@ public class Ringu : MonoBehaviour
         float currentTimer = 0;
 
         // Get the new Green rotation for all rings
-        float[] newRotationsY = new float[4]{0, 0, 0, 0};
+        int[] newRotationsY = new int[4]{0, 0, 0, 0};
 
         // Set the rotations to only one random Z value
         // First ring has a value between 5 and 85, then the second one has a value between 95 and 175, etc...
@@ -141,10 +147,13 @@ public class Ringu : MonoBehaviour
             // Set the blue rotation
             Rings[i].transform.localEulerAngles = Vector3.forward * ((i + 1) * 90 + Random.Range(5, 85f));
 
-
             // Getting new Green rotation
-            newRotationsY[i] = ((i+1)*90 + Random.Range(5, 85f));
+
+
+            newRotationsY[i] = Random.Range(0, 361);
         }
+
+        Debug.Log(Rings[2].transform.localEulerAngles);
 
         SaveAllUpVectors();
 
@@ -152,20 +161,20 @@ public class Ringu : MonoBehaviour
         //                      ACTUALLY ROTATING
         // ==========================================================
 
-        while (currentTimer < 1)
+        while (currentTimer < resetTimer)
         {
             // So that it starts at 0 and ends at 1 at Timer
             // It's to have lerps more easily
-            currentTimer += Time.deltaTime / resetTimer;
+            currentTimer += Time.deltaTime;
         
             for (int i = 0; i < 4; i ++)
             {
                 // Rotate of the value which is "Finish the whole thing in Timer value, and have it finish in newRotationY"
 
-                // RotateRing(Rings[i].GO, Rings[i], newRotationsY[i] * Time.deltaTime / resetTimer);
+                RotateRing(Rings[i].GO, Rings[i], newRotationsY[i] * Time.deltaTime);
 
-                // Old version not using the "Rotate Ring" method
-                Rings[i].transform.Rotate(Rings[i].RotationUpVector * newRotationsY[i] * Time.deltaTime / resetTimer, Space.Self);
+                // Rotate
+                // Rings[i].transform.Rotate(Rings[i].RotationUpVector * newRotationsY[i] * Time.deltaTime, Space.Self);
             }
 
             yield return new WaitForEndOfFrame();
@@ -191,10 +200,7 @@ public class Ringu : MonoBehaviour
     // Rotates around the Green circle axis, the one that the player will change
     public void RotateRing(GameObject _ring, Ring_Parameters ringScript,  float rotationValue)
     {
-        if (!areRingsResetting)
-        {
-            _ring.transform.Rotate(ringScript.RotationUpVector * rotationValue, Space.Self); 
-        }
+        _ring.transform.Rotate(ringScript.RotationUpVector * rotationValue, Space.Self); 
     }
 
     // Rotates around the Blue circle axis, so modifies how the RotateRing rotates
@@ -288,7 +294,7 @@ public class Ringu : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Debug.Log("Target started at position " + targetsStartingProjectedPosition + " and ended at position " + target.transform.position + "\nWe predicted the position " + targetsEndProjectedPosition);
+        // Debug.Log("Target started at position " + targetsStartingProjectedPosition + " and ended at position " + target.transform.position + "\nWe predicted the position " + targetsEndProjectedPosition);
 
         isIslandRotating = false;
 
@@ -302,24 +308,40 @@ public class Ringu : MonoBehaviour
 
     public void Fire()
     {
+        
+
         if (!areRingsResetting)
         {
-            vectorToPreviousTarget = target.transform.position - transform.position;
 
-            if (target != null)
-            {Destroy(target.gameObject);}
-            
+            var score = CalculateScore();
 
-            SelectNewTarget();
-            islandRotationNewTarget = StartCoroutine(RotateIslandTowardsNewTarget());
+            if (score > 2000)
+            {
+                // Increase score
+                totalScore += score;
+                scoreText.text = totalScore.ToString("D9");
 
+                // Animate it
+                scoreAddedTextScript.StartAnimation(score);
 
+                // Save the vector to previous target for Ring One's smooth animation
+                vectorToPreviousTarget = target.transform.position - transform.position;
 
-            ringRotation = StartCoroutine(NewRingRotations());
-            
-            Debug.Log("Score for this shot: " + CalculateScore());
+                // Destroy 
+                if (target != null)
+                {Destroy(target.gameObject);}
+                
+                // Select new target
+                SelectNewTarget();
 
-            
+                // Smooth rotate towards it
+                islandRotationNewTarget = StartCoroutine(RotateIslandTowardsNewTarget());
+                ringRotation = StartCoroutine(NewRingRotations());
+            }
+            else
+            {
+                Debug.Log("The rings are not aligned enough!   " + score);
+            }            
         }
     }
 
@@ -355,7 +377,7 @@ public class Ringu : MonoBehaviour
         finalTargetHeight = targetScript.WhatsYourHeightIn(islandRotationTimer);
     }
 
-    float CalculateScore()
+    int CalculateScore()
     {
         float score = 0;
 
@@ -363,12 +385,18 @@ public class Ringu : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            temp0 = 1000 * VerifyRotationDifference(Rings[i].GO, Rings[i].StartingAngle);
-        
-            score += 100 / temp0;
+            // Rotation difference is a number between 0 and 1, the closer to 0 the better is the score
+            temp0 = VerifyRotationDifference(Rings[i].GO);
+
+
+            // Debug.Log(( 5 / temp0) + " " + VerifyRotationDifference(Rings[i].GO));
+
+
+
+            score += 5 / temp0;
         }    
 
-        return Mathf.Ceil(score);
+        return (int)(score * 10);
     }
 
 
