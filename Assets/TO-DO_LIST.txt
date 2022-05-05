@@ -13,7 +13,6 @@
 ================== [VISUALS] ==================
 
 	- Island
-	- Final Rings?
 	- Enemy ships
 	- Background elements
 

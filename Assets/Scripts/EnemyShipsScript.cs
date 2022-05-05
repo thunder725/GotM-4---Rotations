@@ -8,7 +8,9 @@ public class EnemyShipsScript : MonoBehaviour
     [SerializeField] float heightMultiplicator;
     [SerializeField] Vector2 MinMaxHeight; // The minimum and maximum height possible
     [SerializeField] Vector2 MinMaxDistance; // The minimum and maximum distance from the player possible
-    float startingHeight;
+    
+    //                    Something to setup the starting angle
+    float startingHeight, startingAngleFromRight; 
 
     // ======================== [DEFAULT UNITY METHODS] ========================
     void Awake()
@@ -19,6 +21,14 @@ public class EnemyShipsScript : MonoBehaviour
     void Start()
     {
         transform.position = SelectSpawnPosition();
+
+        // We want them to look towards their rotation, so they'll have a transform.forward aligned with their rotation tangeant
+        // The tangeant is obtained from here https://stackoverflow.com/questions/40710168/find-a-vector-tangent-to-a-circle
+
+        Vector3 toCenter = Vector3.up * startingHeight - transform.position;
+        Vector3 tangeant = new Vector3(-toCenter.z, 0, toCenter.x).normalized;
+
+        transform.forward = tangeant;
 
         // Debug.Log("Ship spawned in " + transform.position + " which is exactly " + chosenDistance + " units away from the player");
         

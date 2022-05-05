@@ -16,7 +16,7 @@ public class Ringu : MonoBehaviour
     PlayerController playerController;
     [SerializeField] float resetTimer; // Timer for them to reset
     public bool areRingsResetting; // If the rings should NOT be interacted with right now
-    bool isIslandRotating;
+    bool isIslandRotating, startRingRotation;
 
     [SerializeField] LayerMask enemyShipsLayer;
     [SerializeField] GameObject entireIsland;
@@ -25,12 +25,16 @@ public class Ringu : MonoBehaviour
 
     [SerializeField] float islandRotationTimer; // Time for the island to get to the next selected target
     Transform target;
-    float finalTargetHeight;
+    float finalTargetHeight, currentTimer;
     int totalScore; 
     public bool testingBool;
-    Coroutine ringRotation, islandRotationNewTarget;
+    Coroutine islandRotationNewTarget;
     EnemyShipsScript targetScript;
     Vector3 vectorToPreviousTarget;
+
+    int[] newRotationsY = new int[4]{0, 0, 0, 0};
+
+    [SerializeField] GameObject ExplosionParticles;
 
     void Awake()
     {
@@ -41,9 +45,7 @@ public class Ringu : MonoBehaviour
     {
         SelectNewTarget();
 
-        // Save it to cancel it at any time
-        ringRotation = StartCoroutine(NewRingRotations());
-
+        startRingRotation = true;
     }
 
     void Update()
@@ -69,6 +71,94 @@ public class Ringu : MonoBehaviour
                 transform.LookAt(target, Vector3.up);
             }
 
+        }
+
+        // ==============================
+        // ROTATION UPDATE 
+        // This doesn't work 100%, but it's the 4th or 5th version of the rotation
+        // It uses the method "RotateRings" to rotate, and the inputs activate RotateRings too
+        // But the two rotations don't cancel out, I don't know why, I've asked help of at least 3 people on the server
+        // No one knows why and it's pretty technical so it's annoying to explain each time because the code is complicated
+        // No matter what, that works good *enough*. I'm not a programmer, that'll be enough
+        // We have other homework to do I can't spend 3 entire weeks on this game 
+
+
+        /*
+            Later edit: Apparently it's because in the world of Quaternions™, doing what we would call "a full rotation of 360°" around any axis
+            doesn't mean a full rotation when changed into Quaternions. So for this game, the only way to have a perfect score is to 
+            turn the rings in the opposite way they rotated, because that way it'll cancel out and they'll be aligned,
+            but keeping rotating won't always return yourself to the starting rotation, or it'll take a long while at least
+            So if you're unlucky (it happens often to be honest) and you go the "wrong" way, the rings might never align
+
+            This is a bad Game Design news, but we're the 5th of May,
+            the game is due in 5 days and I spent AT LEAST 25 hours on this one rotation problem alone...
+            
+            so I'm not making a new game
+
+            Screw Quaternions I guess?
+        */ 
+
+        // Only for the first frame of the ring rotation
+        if (startRingRotation)
+        {
+            // Boolean shenanigans
+            startRingRotation = false;
+            areRingsResetting = true;
+        
+            // Reset the rings' rotations
+            ResetRings();
+
+
+            // Stop all interactions with those
+            areRingsResetting = true;
+
+            // Start timer
+            currentTimer = 0;
+
+            // Get the new Green rotation for all rings
+            newRotationsY = new int[4]{0, 0, 0, 0};
+
+            // Set the rotations to only one random Z value
+            // First ring has a value between 5 and 85, then the second one has a value between 95 and 175, etc...
+            // This will prevent having rings with rotations too similar in the end
+            for (int i = 0; i < 4; i ++)
+            {
+                // Set the blue rotation
+                Rings[i].transform.localEulerAngles = Vector3.forward * ((i + 1) * 90 + Random.Range(5, 85f));
+
+                // Getting new Green rotation
+
+
+                newRotationsY[i] = Random.Range(0, 361);
+            }
+
+            // Debug.Log(Rings[1].transform.localEulerAngles);
+
+            SaveAllUpVectors();
+        }
+
+        // Rest of the rotation 
+        if (areRingsResetting)
+        {
+            if (currentTimer < resetTimer)
+            {
+                currentTimer += Time.deltaTime;
+            
+                for (int i = 0; i < 4; i ++)
+                {
+                    // Rotate of the value which is "Finish the whole thing in Timer value, and have it finish in newRotationY "
+
+                    RotateRing(Rings[i].GO, Rings[i], newRotationsY[i] * Time.deltaTime);
+
+                    // Rotate
+                    // Rings[i].transform.Rotate(Rings[i].RotationUpVector * newRotationsY[i] * Time.deltaTime, Space.Self);
+                }
+            }
+            else // When timer is finished so the rotation is finished
+            {
+                areRingsResetting = false;
+                startRingRotation = false;
+            }
         }
     }
 
@@ -102,90 +192,104 @@ public class Ringu : MonoBehaviour
         }
     }
 
-    // Puts the rings in new rotations in quasi-animation
-    public IEnumerator NewRingRotations()
-    {
+    
+    
+    // // Puts the rings in new rotations in quasi-animation
+    // public IEnumerator NewRingRotations()
+    // {
+    //     // =====================================================================================
+    //     /*
+    //         THIS DOESN'T WORK
+    //         I DON'T KNOW WHY NOR HOW
+    //         BUT IT DOESN'T
+    //         YOU CAN RE-ENABLE IT AND TEST IT BUT IT BUGS OUT
+    //     */
+    //     // =====================================================================================
+
+
+
         
-        // ==========================================================
-        // =====================================================================================
-        // Version 3
-        // =====================================================================================
-        // ==========================================================
+    //     // ==========================================================
+    //     // =====================================================================================
+    //     // Version 3
+    //     // =====================================================================================
+    //     // ==========================================================
 
-        /*
-                Workflow for this version:
+    //     /*
+    //             Workflow for this version:
 
-                - Reset all rotations to (0,0,0)
-                - Randomize the Blue Axis and immediatly set it (0,0,z)
-                - Get a random Green (y) value that has gotten +- several increments of 180
-                - Only animate the Green axis inside of the while loop
+    //             - Reset all rotations to (0,0,0)
+    //             - Randomize the Blue Axis and immediatly set it (0,0,z)
+    //             - Get a random Green (y) value that has gotten +- several increments of 180
+    //             - Only animate the Green axis inside of the while loop
 
-                Let's try this
-        */
-
-
-        // ResetRings();
-
-        // ==========================================================
-        //                      VARIABLE SETUPS
-        // ==========================================================
-
-        // Stop all interactions with those
-        areRingsResetting = true;
-
-        // Start timer
-        float currentTimer = 0;
-
-        // Get the new Green rotation for all rings
-        int[] newRotationsY = new int[4]{0, 0, 0, 0};
-
-        // Set the rotations to only one random Z value
-        // First ring has a value between 5 and 85, then the second one has a value between 95 and 175, etc...
-        // This will prevent having rings with rotations too similar in the end
-        for (int i = 0; i < 4; i ++)
-        {
-            // Set the blue rotation
-            Rings[i].transform.localEulerAngles = Vector3.forward * ((i + 1) * 90 + Random.Range(5, 85f));
-
-            // Getting new Green rotation
+    //             Let's try this
+    //     */
 
 
-            newRotationsY[i] = Random.Range(0, 361);
-        }
+    //     // ResetRings();
 
-        Debug.Log(Rings[2].transform.localEulerAngles);
+    //     // ==========================================================
+    //     //                      VARIABLE SETUPS
+    //     // ==========================================================
 
-        SaveAllUpVectors();
+    //     // Stop all interactions with those
+    //     areRingsResetting = true;
 
-        // ==========================================================
-        //                      ACTUALLY ROTATING
-        // ==========================================================
+    //     // Start timer
+    //     float currentTimer = 0;
 
-        while (currentTimer < resetTimer)
-        {
-            // So that it starts at 0 and ends at 1 at Timer
-            // It's to have lerps more easily
-            currentTimer += Time.deltaTime;
+    //     // Get the new Green rotation for all rings
+    //     int[] newRotationsY = new int[4]{0, 0, 0, 0};
+
+    //     // Set the rotations to only one random Z value
+    //     // First ring has a value between 5 and 85, then the second one has a value between 95 and 175, etc...
+    //     // This will prevent having rings with rotations too similar in the end
+    //     for (int i = 0; i < 4; i ++)
+    //     {
+    //         // Set the blue rotation
+    //         Rings[i].transform.localEulerAngles = Vector3.forward * ((i + 1) * 90 + Random.Range(5, 85f));
+
+    //         // Getting new Green rotation
+
+
+    //         newRotationsY[i] = Random.Range(0, 361);
+    //     }
+
+    //     Debug.Log(Rings[2].transform.localEulerAngles);
+
+    //     SaveAllUpVectors();
+
+    //     // ==========================================================
+    //     //                      ACTUALLY ROTATING
+    //     // ==========================================================
+
+    //     while (currentTimer < resetTimer)
+    //     {
+    //         // So that it starts at 0 and ends at 1 at Timer
+    //         // It's to have lerps more easily
+    //         currentTimer += Time.deltaTime;
         
-            for (int i = 0; i < 4; i ++)
-            {
-                // Rotate of the value which is "Finish the whole thing in Timer value, and have it finish in newRotationY"
+    //         for (int i = 0; i < 4; i ++)
+    //         {
+    //             // Rotate of the value which is "Finish the whole thing in Timer value, and have it finish in newRotationY"
 
-                RotateRing(Rings[i].GO, Rings[i], newRotationsY[i] * Time.deltaTime);
+    //             RotateRing(Rings[i].GO, Rings[i], newRotationsY[i] * Time.deltaTime);
 
-                // Rotate
-                // Rings[i].transform.Rotate(Rings[i].RotationUpVector * newRotationsY[i] * Time.deltaTime, Space.Self);
-            }
+    //             // Rotate
+    //             // Rings[i].transform.Rotate(Rings[i].RotationUpVector * newRotationsY[i] * Time.deltaTime, Space.Self);
+    //         }
 
-            yield return new WaitForEndOfFrame();
-        }
+    //         yield return new WaitForEndOfFrame();
+    //     }
 
 
-        areRingsResetting = false;
+    //     areRingsResetting = false;
 
-        StopCoroutine(ringRotation);
-        yield return null;
-    }
+    //     StopCoroutine(ringRotation);
+    //     yield return null;
+    // }
+
 
 
     void SaveAllUpVectors()
@@ -315,7 +419,7 @@ public class Ringu : MonoBehaviour
 
             var score = CalculateScore();
 
-            if (score > 2000)
+            if (score > 1200)
             {
                 // Increase score
                 totalScore += score;
@@ -327,16 +431,22 @@ public class Ringu : MonoBehaviour
                 // Save the vector to previous target for Ring One's smooth animation
                 vectorToPreviousTarget = target.transform.position - transform.position;
 
+                // Spawn visual effects
+                var particles = Instantiate(ExplosionParticles, target.transform.position, Quaternion.LookRotation(vectorToPreviousTarget));
+
                 // Destroy 
                 if (target != null)
                 {Destroy(target.gameObject);}
+
                 
                 // Select new target
                 SelectNewTarget();
 
                 // Smooth rotate towards it
                 islandRotationNewTarget = StartCoroutine(RotateIslandTowardsNewTarget());
-                ringRotation = StartCoroutine(NewRingRotations());
+
+
+                startRingRotation = true;
             }
             else
             {
@@ -379,6 +489,8 @@ public class Ringu : MonoBehaviour
 
     int CalculateScore()
     {
+        
+
         float score = 0;
 
         float temp0 = 0;
@@ -392,6 +504,14 @@ public class Ringu : MonoBehaviour
             // Debug.Log(( 5 / temp0) + " " + VerifyRotationDifference(Rings[i].GO));
 
 
+            // Something weird happened...
+            // Once during testing, The score overflowed to -2147483648 precisely because one ring was EXACTLY ALIGNED
+            // so its sin was exactly 0, and there's a division by 0 so it's infinite, and then scores were added on top of it so it overflowed
+            // So there's a fix for that event that won't happen ever again
+            if (temp0 == 0)
+            {
+                temp0 = 0.00001f;
+            }
 
             score += 5 / temp0;
         }    

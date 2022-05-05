@@ -9,6 +9,10 @@ public class ShipSpawner : MonoBehaviour
     [SerializeField] GameObject enemyShipPrefab;
     [SerializeField] int startingShipAmount, buttonShipAmount;
 
+    [SerializeField] float timerBetweenShips;
+
+    float currentTimer;
+
     public static ShipSpawner _instance;
 
 
@@ -23,6 +27,8 @@ public class ShipSpawner : MonoBehaviour
             Instantiate(enemyShipPrefab, Vector3.zero, Quaternion.identity);
         }
 
+        currentTimer = timerBetweenShips;
+
     }
 
     void Start()
@@ -32,7 +38,13 @@ public class ShipSpawner : MonoBehaviour
 
     void Update()
     {
-        
+        currentTimer -= Time.deltaTime;
+
+        if (currentTimer <= 0)
+        {
+            currentTimer = timerBetweenShips;
+            Instantiate(enemyShipPrefab, Vector3.zero, Quaternion.identity); 
+        }
     }
 
     // ======================== [SCRIPT METHODS] ========================
