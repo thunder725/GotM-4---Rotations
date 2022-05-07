@@ -1,4 +1,5 @@
 
+ALL DONE LET'S GO
 
 
 ================== [AUDIO] ==================
@@ -7,19 +8,9 @@
 ================== [CODING] ==================
 
 
-
-
-
 ================== [VISUALS] ==================
 
-	- Island
-	- Enemy ships
-	- Background elements
-
-	- Shooting
-
-	- UI
 
 ================== [OTHER] ==================
 
-	- Mini tutorial
+

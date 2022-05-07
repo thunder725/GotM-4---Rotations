@@ -89,6 +89,14 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""QuitTheGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""afe6b29a-b145-423c-9746-10e7d1d49e47"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -278,6 +286,17 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                     ""action"": ""SkipTutorial"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aa1fdcd7-0d10-4169-8638-6c7e68c381f2"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuitTheGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -295,6 +314,7 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
         m_Default_RotateRingFour = m_Default.FindAction("RotateRingFour", throwIfNotFound: true);
         m_Default_RotateRingFive = m_Default.FindAction("RotateRingFive", throwIfNotFound: true);
         m_Default_SkipTutorial = m_Default.FindAction("SkipTutorial", throwIfNotFound: true);
+        m_Default_QuitTheGame = m_Default.FindAction("QuitTheGame", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -353,6 +373,7 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
     private readonly InputAction m_Default_RotateRingFour;
     private readonly InputAction m_Default_RotateRingFive;
     private readonly InputAction m_Default_SkipTutorial;
+    private readonly InputAction m_Default_QuitTheGame;
     public struct DefaultActions
     {
         private @PlayerControllerInputs m_Wrapper;
@@ -366,6 +387,7 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
         public InputAction @RotateRingFour => m_Wrapper.m_Default_RotateRingFour;
         public InputAction @RotateRingFive => m_Wrapper.m_Default_RotateRingFive;
         public InputAction @SkipTutorial => m_Wrapper.m_Default_SkipTutorial;
+        public InputAction @QuitTheGame => m_Wrapper.m_Default_QuitTheGame;
         public InputActionMap Get() { return m_Wrapper.m_Default; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -402,6 +424,9 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                 @SkipTutorial.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnSkipTutorial;
                 @SkipTutorial.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnSkipTutorial;
                 @SkipTutorial.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnSkipTutorial;
+                @QuitTheGame.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnQuitTheGame;
+                @QuitTheGame.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnQuitTheGame;
+                @QuitTheGame.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnQuitTheGame;
             }
             m_Wrapper.m_DefaultActionsCallbackInterface = instance;
             if (instance != null)
@@ -433,6 +458,9 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                 @SkipTutorial.started += instance.OnSkipTutorial;
                 @SkipTutorial.performed += instance.OnSkipTutorial;
                 @SkipTutorial.canceled += instance.OnSkipTutorial;
+                @QuitTheGame.started += instance.OnQuitTheGame;
+                @QuitTheGame.performed += instance.OnQuitTheGame;
+                @QuitTheGame.canceled += instance.OnQuitTheGame;
             }
         }
     }
@@ -448,5 +476,6 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
         void OnRotateRingFour(InputAction.CallbackContext context);
         void OnRotateRingFive(InputAction.CallbackContext context);
         void OnSkipTutorial(InputAction.CallbackContext context);
+        void OnQuitTheGame(InputAction.CallbackContext context);
     }
 }

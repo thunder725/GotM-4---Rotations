@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
         inputs.Default.RotateSelectedRing.started += RotateSelectedRing;
         inputs.Default.Fire.started += Fire;
         inputs.Default.SkipTutorial.started += SkipTutorial;
+        inputs.Default.QuitTheGame.started += QuitTheGame;
     }
 
     void OnDestroy()
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
         inputs.Default.RotateSelectedRing.started -= RotateSelectedRing;
         inputs.Default.Fire.started -= Fire;
         inputs.Default.SkipTutorial.started -= SkipTutorial;
+        inputs.Default.QuitTheGame.started += QuitTheGame;
     }
 
     void Update()
@@ -136,6 +138,12 @@ public class PlayerController : MonoBehaviour
                 return;
             }
         }
+    }
+
+    void QuitTheGame(InputAction.CallbackContext c)
+    {
+        Application.Quit();
+        Debug.Log("Quit game lol");
     }
 
 }
