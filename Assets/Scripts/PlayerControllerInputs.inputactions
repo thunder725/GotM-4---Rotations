@@ -68,6 +68,14 @@
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "SkipTutorial",
+                    "type": "Button",
+                    "id": "48645c11-7efc-4530-8522-9b3db21adc7e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -244,6 +252,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7b7bf99d-c30d-48c7-ab6f-703624fbf577",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipTutorial",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

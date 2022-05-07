@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
         inputs.Default.SelectRing.started += SelectRing;
         inputs.Default.RotateSelectedRing.started += RotateSelectedRing;
         inputs.Default.Fire.started += Fire;
+        inputs.Default.SkipTutorial.started += SkipTutorial;
     }
 
     void OnDestroy()
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
         inputs.Default.SelectRing.started -= SelectRing;
         inputs.Default.RotateSelectedRing.started -= RotateSelectedRing;
         inputs.Default.Fire.started -= Fire;
+        inputs.Default.SkipTutorial.started -= SkipTutorial;
     }
 
     void Update()
@@ -119,6 +121,21 @@ public class PlayerController : MonoBehaviour
     void Fire(InputAction.CallbackContext c)
     {
         ringManager.Fire();
+    }
+
+    void SkipTutorial(InputAction.CallbackContext c)
+    {
+
+        // Only call SkipTutorial in the main script and not the buttons' script
+        var _array = FindObjectsOfType<Tutorial>();
+        foreach (Tutorial _t in _array)
+        {
+            if (_t.referenceForButtons == null)
+            {
+                _t.SkipTutorial();
+                return;
+            }
+        }
     }
 
 }

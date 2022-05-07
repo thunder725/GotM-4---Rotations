@@ -81,6 +81,14 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""SkipTutorial"",
+                    ""type"": ""Button"",
+                    ""id"": ""48645c11-7efc-4530-8522-9b3db21adc7e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -259,6 +267,17 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                     ""action"": ""MousePosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7b7bf99d-c30d-48c7-ab6f-703624fbf577"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkipTutorial"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -275,6 +294,7 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
         m_Default_RotateRingThree = m_Default.FindAction("RotateRingThree", throwIfNotFound: true);
         m_Default_RotateRingFour = m_Default.FindAction("RotateRingFour", throwIfNotFound: true);
         m_Default_RotateRingFive = m_Default.FindAction("RotateRingFive", throwIfNotFound: true);
+        m_Default_SkipTutorial = m_Default.FindAction("SkipTutorial", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -332,6 +352,7 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
     private readonly InputAction m_Default_RotateRingThree;
     private readonly InputAction m_Default_RotateRingFour;
     private readonly InputAction m_Default_RotateRingFive;
+    private readonly InputAction m_Default_SkipTutorial;
     public struct DefaultActions
     {
         private @PlayerControllerInputs m_Wrapper;
@@ -344,6 +365,7 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
         public InputAction @RotateRingThree => m_Wrapper.m_Default_RotateRingThree;
         public InputAction @RotateRingFour => m_Wrapper.m_Default_RotateRingFour;
         public InputAction @RotateRingFive => m_Wrapper.m_Default_RotateRingFive;
+        public InputAction @SkipTutorial => m_Wrapper.m_Default_SkipTutorial;
         public InputActionMap Get() { return m_Wrapper.m_Default; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -377,6 +399,9 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                 @RotateRingFive.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnRotateRingFive;
                 @RotateRingFive.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnRotateRingFive;
                 @RotateRingFive.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnRotateRingFive;
+                @SkipTutorial.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnSkipTutorial;
+                @SkipTutorial.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnSkipTutorial;
+                @SkipTutorial.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnSkipTutorial;
             }
             m_Wrapper.m_DefaultActionsCallbackInterface = instance;
             if (instance != null)
@@ -405,6 +430,9 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
                 @RotateRingFive.started += instance.OnRotateRingFive;
                 @RotateRingFive.performed += instance.OnRotateRingFive;
                 @RotateRingFive.canceled += instance.OnRotateRingFive;
+                @SkipTutorial.started += instance.OnSkipTutorial;
+                @SkipTutorial.performed += instance.OnSkipTutorial;
+                @SkipTutorial.canceled += instance.OnSkipTutorial;
             }
         }
     }
@@ -419,5 +447,6 @@ public class @PlayerControllerInputs : IInputActionCollection, IDisposable
         void OnRotateRingThree(InputAction.CallbackContext context);
         void OnRotateRingFour(InputAction.CallbackContext context);
         void OnRotateRingFive(InputAction.CallbackContext context);
+        void OnSkipTutorial(InputAction.CallbackContext context);
     }
 }

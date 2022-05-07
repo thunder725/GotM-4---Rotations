@@ -96,7 +96,14 @@ public class Ringu : MonoBehaviour
             so I'm not making a new game
 
             Screw Quaternions I guess?
+        
+        
+
+            Or maybe it's a feature and you can't be perfect but you have to do as best as you can
+            idk yet        
         */ 
+
+
 
         // Only for the first frame of the ring rotation
         if (startRingRotation)
