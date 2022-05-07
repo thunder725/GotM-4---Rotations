@@ -32,6 +32,9 @@ public class Ringu : MonoBehaviour
     EnemyShipsScript targetScript;
     Vector3 vectorToPreviousTarget;
 
+    float currentNotAlignedEnoughTextTimer;
+    [SerializeField] GameObject notAlignedEnoughText;
+
     int[] newRotationsY = new int[4]{0, 0, 0, 0};
 
     [SerializeField] GameObject ExplosionParticles;
@@ -46,6 +49,7 @@ public class Ringu : MonoBehaviour
         SelectNewTarget();
 
         startRingRotation = true;
+        notAlignedEnoughText.SetActive(false);
     }
 
     void Update()
@@ -71,6 +75,16 @@ public class Ringu : MonoBehaviour
                 transform.LookAt(target, Vector3.up);
             }
 
+        }
+
+        if (currentNotAlignedEnoughTextTimer > 0)
+        {
+            currentNotAlignedEnoughTextTimer -= Time.deltaTime;
+            
+            if (currentNotAlignedEnoughTextTimer <= 0)
+            {
+                notAlignedEnoughText.SetActive(false);
+            }
         }
 
         // ==============================
@@ -457,7 +471,9 @@ public class Ringu : MonoBehaviour
             }
             else
             {
-                Debug.Log("The rings are not aligned enough!   " + score);
+                // Debug.Log("The rings are not aligned enough!   " + score);
+                currentNotAlignedEnoughTextTimer = 3.5f;
+                notAlignedEnoughText.SetActive(true);
             }            
         }
     }

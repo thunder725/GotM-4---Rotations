@@ -59,6 +59,8 @@ public class ShipSpawner : MonoBehaviour
 
 }
 
+
+#if UNITY_EDITOR
 [CustomEditor(typeof(ShipSpawner))]
 public class ShipSpawnerEditor : Editor
 {
@@ -72,3 +74,4 @@ public class ShipSpawnerEditor : Editor
         }
     }
 }
+#endif

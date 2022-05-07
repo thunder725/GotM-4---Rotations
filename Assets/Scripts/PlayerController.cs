@@ -114,7 +114,8 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            var value = inputs.Default.RotateSelectedRing.ReadValue<float>();
+            // Use only the sign, because otherwise the speed difference between editor and build is like a factor of 4, even with *Time.deltaTime
+            var value = Mathf.Sign(inputs.Default.RotateSelectedRing.ReadValue<float>());
 
             ringManager.RotateRing(selectedRing, selectedRingScript, selectedRotationSpeed * value * Time.deltaTime);
         }

@@ -11,7 +11,7 @@ public class Tutorial : MonoBehaviour
     [SerializeField] string[] tutorialTexts;
 
     // I'm too lazy to create a separate script for buttons or to make a scriptable object or a static thing
-    // So I'll attack this script on the buttons to go to the next step, they'll call "NextStepButton"
+    // So I'll attach this script on the buttons to go to the next step, they'll call "NextStepButton"
     // It will call NextStep on the reference only
     // Trash but it works
     public Tutorial referenceForButtons;
